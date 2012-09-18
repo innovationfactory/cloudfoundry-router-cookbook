@@ -17,21 +17,6 @@
 # limitations under the License.
 #
 
-include_recipe "nginx"
-
-template File.join(node[:nginx][:dir], "sites-available", "router") do
-  source "nginx.conf.erb"
-  owner  "root"
-  group  "root"
-  mode   "0644"
-  notifies :restart, "service[nginx]"
-end
-
-nginx_site "router"
-
-# nginx recipe adds a default site. It gets in our way, so we remove it.
-nginx_site "default" do
-  enable false
-end
-
 cloudfoundry_component "router"
+
+include_recipe "cloudfoundry-router::nginx"
