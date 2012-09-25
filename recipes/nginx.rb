@@ -18,7 +18,7 @@ setup_cache_dir = node[:cloudfoundry_router][:setup_cache_dir]
 case node['platform']
 when "ubuntu"
 
-  %w[ build-essential].each do |pkg|
+  %w[libreadline-dev build-essential].each do |pkg|
     package pkg
   end
 
