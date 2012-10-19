@@ -6,14 +6,14 @@
 #
 #
 
-nginx_version = node[:nginx][:version]
-nginx_source = node[:nginx][:source]
-nginx_path = node[:nginx][:path]
-lua_version = node[:lua][:version]
-lua_source = node[:lua][:source]
-lua_path = node[:lua][:path]
-lua_module_path = node[:lua][:module_path]
-setup_cache_dir = node[:cloudfoundry_router][:setup_cache_dir]
+nginx_version = node['nginx']['version']
+nginx_source = node['nginx']['source']
+nginx_path = node['nginx']['path']
+lua_version = node['lua']['version']
+lua_source = node['lua']['source']
+lua_path = node['lua']['path']
+lua_module_path = node['lua']['module_path']
+setup_cache_dir = node['cloudfoundry_router']['setup_cache_dir']
 
 case node['platform']
 when "ubuntu"
@@ -25,79 +25,79 @@ when "ubuntu"
   # Lua related packages
   lua_tarball = File.join(setup_cache_dir, "lua-#{lua_version}.tar.gz")
   remote_file lua_tarball do
-    owner node[:cloudfoundry_common][:user]
+    owner node['cloudfoundry_common']['user']
     source lua_source
-    checksum node[:lua][:checksums][:source]
+    checksum node['lua']['checksums']['source']
   end
 
   lua_cjson_tarball = File.join(setup_cache_dir, "lua-cjson-1.0.3.tar.gz")
   remote_file lua_cjson_tarball do
-    owner node[:cloudfoundry_common][:user]
-    source node[:lua][:cjson_source]
-    checksum node[:lua][:checksums][:cjson_source]
+    owner node['cloudfoundry_common']['user']
+    source node['lua']['cjson_source']
+    checksum node['lua']['checksums']['cjson_source']
   end
 
   # Nginx related packages
   nginx_tarball = File.join(setup_cache_dir, "nginx-#{nginx_version}.tar.gz")
   remote_file nginx_tarball do
-    owner node[:cloudfoundry_common][:user]
+    owner node['cloudfoundry_common']['user']
     source nginx_source
-    checksum node[:nginx][:checksums][:source]
+    checksum node['nginx']['checksums']['source']
   end
 
   nginx_patch = File.join(setup_cache_dir, "zero_byte_in_cstr_20120315.patch")
   remote_file nginx_patch do
-    owner node[:cloudfoundry_common][:user]
-    source node[:nginx][:patch]
-    checksum node[:nginx][:checksums][:patch]
+    owner node['cloudfoundry_common']['user']
+    source node['nginx']['patch']
+    checksum node['nginx']['checksums']['patch']
   end
 
   pcre_tarball = File.join(setup_cache_dir, "pcre-8.12.tar.gz")
   remote_file pcre_tarball do
-    owner node[:cloudfoundry_common][:user]
-    source node[:nginx][:pcre_source]
-    checksum node[:nginx][:checksums][:pcre_source]
+    owner node['cloudfoundry_common']['user']
+    source node['nginx']['pcre_source']
+    checksum node['nginx']['checksums']['pcre_source']
   end
 
   nginx_upload_module_tarball = File.join(setup_cache_dir, "nginx_upload_module-2.2.0.tar.gz")
   remote_file nginx_upload_module_tarball do
-    owner node[:cloudfoundry_common][:user]
-    source node[:nginx][:module_upload_source]
-    checksum node[:nginx][:checksums][:module_upload_source]
+    owner node['cloudfoundry_common']['user']
+    source node['nginx']['module_upload_source']
+    checksum node['nginx']['checksums']['module_upload_source']
   end
 
   headers_more_tarball = File.join(setup_cache_dir, "headers-more-v0.15rc3.tar.gz")
   remote_file headers_more_tarball do
-    owner node[:cloudfoundry_common][:user]
-    source node[:nginx][:module_headers_more_source]
-    checksum node[:nginx][:checksums][:module_headers_more_source]
+    owner node['cloudfoundry_common']['user']
+    source node['nginx']['module_headers_more_source']
+    checksum node['nginx']['checksums']['module_headers_more_source']
   end
 
   devel_kit_tarball = File.join(setup_cache_dir, "devel-kit-v0.2.17rc2.tar.gz")
   remote_file devel_kit_tarball do
-    owner node[:cloudfoundry_common][:user]
-    source node[:nginx][:module_devel_kit_source]
-    checksum node[:nginx][:checksums][:module_devel_kit_source]
+    owner node['cloudfoundry_common']['user']
+    source node['nginx']['module_devel_kit_source']
+    checksum node['nginx']['checksums']['module_devel_kit_source']
   end
 
   nginx_lua_tarball = File.join(setup_cache_dir, "nginx-lua.v0.3.1rc24.tar.gz")
   remote_file nginx_lua_tarball do
-    owner node[:cloudfoundry_common][:user]
-    source node[:nginx][:module_lua_source]
-    checksum node[:nginx][:checksums][:module_lua_source]
+    owner node['cloudfoundry_common']['user']
+    source node['nginx']['module_lua_source']
+    checksum node['nginx']['checksums']['module_lua_source']
   end
 
   directory nginx_path do
-    owner node[:cloudfoundry_common][:user]
-    group node[:cloudfoundry_common][:group]
+    owner node['cloudfoundry_common']['user']
+    group node['cloudfoundry_common']['group']
     mode "0755"
     recursive true
     action :create
   end
 
   directory lua_path do
-    owner node[:cloudfoundry_common][:user]
-    group node[:cloudfoundry_common][:group]
+    owner node['cloudfoundry_common']['user']
+    group node['cloudfoundry_common']['group']
     mode "0755"
     recursive true
     action :create
@@ -105,7 +105,7 @@ when "ubuntu"
 
   bash "Install lua" do
     cwd File.join("", "tmp")
-    user node[:cloudfoundry_common][:user]
+    user node['cloudfoundry_common']['user']
     code <<-EOH
       tar xzf #{lua_tarball}
       cd lua-#{lua_version}
@@ -116,7 +116,7 @@ when "ubuntu"
 
   bash "Install lua json" do
     cwd File.join("", "tmp")
-    user node[:cloudfoundry_common][:user]
+    user node['cloudfoundry_common']['user']
     code <<-EOH
       tar xzf #{lua_cjson_tarball}
       cd mpx-lua-cjson-ddbb686
@@ -129,7 +129,7 @@ when "ubuntu"
 
   bash "Install nginx" do
     cwd File.join("", "tmp")
-    user node[:cloudfoundry_common][:user]
+    user node['cloudfoundry_common']['user']
     code <<-EOH
       tar xzf #{nginx_tarball}
       tar xzf #{pcre_tarball}
@@ -158,23 +158,23 @@ when "ubuntu"
   template "router-nginx.conf" do
     path File.join(nginx_path, "conf", "router-nginx.conf")
     source "router-nginx.conf.erb"
-    owner node[:cloudfoundry_common][:user]
+    owner node['cloudfoundry_common']['user']
     mode 0644
   end
 
   template "uls.lua" do
     path File.join(lua_module_path, "uls.lua")
-    source File.join(node[:lua][:plugin_source_path], "uls.lua")
+    source File.join(node['lua']['plugin_source_path'], "uls.lua")
     local true
-    owner node[:cloudfoundry_common][:user]
+    owner node['cloudfoundry_common']['user']
     mode 0644
   end
 
   template "tablesave.lua" do
     path File.join(lua_module_path, "tablesave.lua")
-    source File.join(node[:lua][:plugin_source_path], "tablesave.lua")
+    source File.join(node['lua']['plugin_source_path'], "tablesave.lua")
     local true
-    owner node[:cloudfoundry_common][:user]
+    owner node['cloudfoundry_common']['user']
     mode 0644
   end
 
@@ -186,7 +186,7 @@ when "ubuntu"
       :config_file => File.join(nginx_path, 'conf', 'router-nginx.conf'),
     )
     notifies :restart, "service[router-nginx]"
-    owner node[:cloudfoundry_common][:user]
+    owner node['cloudfoundry_common']['user']
     mode 0644
   end
 

@@ -1,11 +1,11 @@
 user  root root;
 worker_processes  1;
 
-error_log <%= node[:nginx][:log_home] %>/nginx_router_error.log debug;
+error_log <%= node['nginx']['log_home'] %>/nginx_router_error.log debug;
 pid        /var/run/nginx_router.pid;
 
 events {
-    worker_connections  <%= node[:nginx][:worker_connections] %>;
+    worker_connections  <%= node['nginx']['worker_connections'] %>;
     use epoll;
     # multi_accept on;
 }
@@ -20,7 +20,7 @@ http {
                    '"$http_referer" "$http_user_agent" '
                    '$remote_addr response_time:$upstream_response_time app_id:$app_id';
 
-  access_log   <%= node[:cloudfoundry_common][:log_dir] %>/nginx_router_main_access.log main;
+  access_log   <%= node['cloudfoundry_common']['log_dir'] %>/nginx_router_main_access.log main;
 
   sendfile             on;
   tcp_nopush           on;
@@ -37,13 +37,13 @@ http {
   gzip_vary            on;
   gzip_disable         "MSIE [1-6]\.(?!.*SV1)";
 
-  client_max_body_size <%= node[:cloudfoundry_router][:client_max_body_size] %>;
+  client_max_body_size <%= node['cloudfoundry_router']['client_max_body_size'] %>;
 
-  lua_package_path "<%= node[:lua][:module_path] %>/?.lua;;";
-  lua_package_cpath "<%= node[:lua][:module_path] %>/?.so;;";
+  lua_package_path "<%= node['lua']['module_path'] %>/?.lua;;";
+  lua_package_cpath "<%= node['lua']['module_path'] %>/?.so;;";
 
   upstream router_status {
-    server <%= node[:nginx][:uls_ip] %>:<%= node[:nginx][:uls_port] %>;
+    server <%= node['nginx']['uls_ip'] %>:<%= node['nginx']['uls_port'] %>;
   }
 
   server {
@@ -59,11 +59,11 @@ http {
       # Given there are some exceptions to clear some headers,
       # we just leave them as is.
 
-      proxy_pass http://unix:<%= node[:cloudfoundry_router][:socket_file] %>:/;
+      proxy_pass http://unix:<%= node['cloudfoundry_router']['socket_file'] %>:/;
     }
 
     location / {
-      access_log   <%= node[:cloudfoundry_common][:log_dir] %>/nginx_router_access.log main;
+      access_log   <%= node['cloudfoundry_common']['log_dir'] %>/nginx_router_access.log main;
       proxy_buffering             off;
       proxy_set_header            Host $host;
       proxy_set_header            X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -97,7 +97,7 @@ http {
           )
         ';
 
-        more_set_input_headers "Authorization: Basic <%= Base64.encode64("#{node[:nginx][:status_user]}:#{node[:nginx][:status_passwd]}").strip %>";
+        more_set_input_headers "Authorization: Basic <%= Base64.encode64("#{node['nginx']['status_user']}:#{node['nginx']['status_passwd']}").strip %>";
         rewrite ^.*$ /healthz break;
         proxy_pass                 http://router_status;
       }
@@ -119,7 +119,7 @@ http {
         access_by_lua '
           local uls = require ("uls")
 
-          uls.pre_process_subrequest(ngx, "<%= node[:cloudfoundry_router][:trace_key] %>")
+          uls.pre_process_subrequest(ngx, "<%= node['cloudfoundry_router']['trace_key'] %>")
           local req = uls.generate_uls_request(ngx)
 
           -- generate one subrequest to uls for querying
