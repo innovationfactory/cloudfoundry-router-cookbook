@@ -33,6 +33,15 @@ front of the Router. To use in your recipes:
 
     include_recipe "cloudfoundry-router"
 
+Additionaly the ssl recipe can be included.
+It expects a addresses databag with the following structure:
+{
+  "id": "10_0_0_1",
+  "cert": "cert.name"
+}
+with the id being the ipadress on which you want to listen for https and cert being the base name of the certificate file (so withouth the extesion).
+The cookbook expects the certificates to be already on the machine for example by using the ssl cookbook.
+
 Attributes
 ==========
 
@@ -46,6 +55,7 @@ License and Author
 ==================
 
 Author:: Trotter Cashion (<cashion@gmail.com>)
+Author:: Ruben Koster
 
 Copyright:: 2012 Trotter Cashion
 

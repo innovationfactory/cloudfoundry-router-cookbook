@@ -143,6 +143,7 @@ when "ubuntu"
 
       LUA_LIB=#{lua_path}/lib LUA_INC=#{lua_path}/include ./configure \
         --prefix=#{nginx_path} \
+        --with-http_ssl_module \
         --with-pcre=../pcre-8.12 \
         --add-module=../nginx_upload_module-2.2.0 \
         --add-module=../agentzh-headers-more-nginx-module-5fac223 \
@@ -160,6 +161,31 @@ when "ubuntu"
     source "router-nginx.conf.erb"
     owner node['cloudfoundry_common']['user']
     mode 0644
+    notifies :restart, "service[router-nginx]"
+  end
+
+  template "location-nginx.conf" do
+    path File.join(nginx_path, "conf", "location-nginx.conf")
+    source "location-nginx.conf.erb"
+    owner node['cloudfoundry_common']['user']
+    mode 0644
+    notifies :restart, "service[router-nginx]"
+  end
+
+  directory File.join(nginx_path, "conf", "servers") do
+    owner node['cloudfoundry_common']['user']
+    group node['cloudfoundry_common']['group']
+    mode "0755"
+    recursive true
+    action :create
+  end
+
+  template "default-server-nginx.conf" do
+    path File.join(nginx_path, "conf", "servers", "default.conf")
+    source "default-server-nginx.conf.erb"
+    owner node['cloudfoundry_common']['user']
+    mode 0644
+    notifies :restart, "service[router-nginx]"
   end
 
   template "uls.lua" do

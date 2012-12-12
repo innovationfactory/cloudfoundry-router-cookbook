@@ -1,0 +1,9 @@
+server {
+  listen <%= @address %>:443;
+  ssl on;
+  ssl_certificate <%= @cert_file %>;
+  ssl_certificate_key <%= @key_file %>;
+  server_name  _;
+  server_name_in_redirect off;
+  include location-nginx.conf;
+}

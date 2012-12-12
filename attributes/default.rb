@@ -20,6 +20,9 @@ default['cloudfoundry_router']['session_key']    = "14fbc303b76bacd1e0a3ab641c11
 default['cloudfoundry_router']['trace_key']    = "222"
 default['cloudfoundry_router']['setup_cache_dir'] = "/usr/local/src"
 
+default['cloudfoundry_router']['ssl']['certs_dir'] = "/etc/ssl/certs"
+default['cloudfoundry_router']['ssl']['keys_dir'] = "/etc/ssl/private"
+
 # Imported form https://github.com/cloudfoundry/vcap/blob/56d5cefa7fdb01fd113300b4a5888647b369c4bb/dev_setup/cookbooks/nginx/attributes/default.rb
 default['nginx']['version'] = "0.8.54"
 default['nginx']['source']  = "http://nginx.org/download/nginx-#{nginx['version']}.tar.gz"
